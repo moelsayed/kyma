@@ -93,6 +93,9 @@ images:
     python38:
       repository: "eu.gcr.io/kyma-project/function-runtime-python38"
       tag: "6b4289ab"
+    python39:
+      repository: "eu.gcr.io/kyma-project/function-runtime-python39"
+      tag: "FIXME"
 
 deployment:
   replicas: 1
