@@ -8,7 +8,6 @@ import (
 	"github.com/kyma-project/kyma/components/function-controller/internal/controllers/serverless/runtime"
 	"github.com/kyma-project/kyma/components/function-controller/internal/git"
 	serverlessv1alpha1 "github.com/kyma-project/kyma/components/function-controller/pkg/apis/serverless/v1alpha1"
-	"github.com/sirupsen/logrus"
 	appsv1 "k8s.io/api/apps/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -41,7 +40,6 @@ func (r *FunctionReconciler) buildConfigMap(instance *serverlessv1alpha1.Functio
 		FunctionSourceKey: instance.Spec.Source,
 		FunctionDepsKey:   rtm.SanitizeDependencies(instance.Spec.Deps),
 	}
-	logrus.Infof("----------------------------------------------BuildConfigMap %v", data)
 	return corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Labels:       r.functionLabels(instance),
@@ -62,6 +60,10 @@ func (r *FunctionReconciler) buildJob(instance *serverlessv1alpha1.Function, rtm
 	args := r.config.Build.ExecutorArgs
 	args = append(args, fmt.Sprintf("%s=%s", destinationArg, imageName), fmt.Sprintf("--context=dir://%s", workspaceMountPath))
 
+	dockerFileConfigMap := rtmConfig.DockerfileConfigMapName
+	if instance.Spec.BaseDockerFile != "" {
+		dockerFileConfigMap = instance.Spec.BaseDockerFile
+	}
 	return batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: fmt.Sprintf("%s-build-", instance.GetName()),
@@ -92,7 +94,7 @@ func (r *FunctionReconciler) buildJob(instance *serverlessv1alpha1.Function, rtm
 							Name: "runtime",
 							VolumeSource: corev1.VolumeSource{
 								ConfigMap: &corev1.ConfigMapVolumeSource{
-									LocalObjectReference: corev1.LocalObjectReference{Name: rtmConfig.DockerfileConfigMapName},
+									LocalObjectReference: corev1.LocalObjectReference{Name: dockerFileConfigMap},
 								},
 							},
 						},
@@ -248,7 +250,10 @@ func (r *FunctionReconciler) buildGitJob(instance *serverlessv1alpha1.Function, 
 	zero := int32(0)
 	rootUser := int64(0)
 	optional := true
-
+	dockerFileConfigMap := rtmConfig.DockerfileConfigMapName
+	if instance.Spec.BaseDockerFile != "" {
+		dockerFileConfigMap = instance.Spec.BaseDockerFile
+	}
 	return batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: fmt.Sprintf("%s-build-", instance.GetName()),
@@ -285,7 +290,7 @@ func (r *FunctionReconciler) buildGitJob(instance *serverlessv1alpha1.Function, 
 							Name: "runtime",
 							VolumeSource: corev1.VolumeSource{
 								ConfigMap: &corev1.ConfigMapVolumeSource{
-									LocalObjectReference: corev1.LocalObjectReference{Name: rtmConfig.DockerfileConfigMapName},
+									LocalObjectReference: corev1.LocalObjectReference{Name: dockerFileConfigMap},
 								},
 							},
 						},
