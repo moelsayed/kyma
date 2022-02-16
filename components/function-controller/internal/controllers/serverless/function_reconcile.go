@@ -97,7 +97,6 @@ func (r *FunctionReconciler) SetupWithManager(mgr ctrl.Manager) (controller.Cont
 func (r *FunctionReconciler) Reconcile(request ctrl.Request) (ctrl.Result, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
 	if IsHealthCheckRequest(request) {
 		r.healthCh <- true
 		return ctrl.Result{}, nil
@@ -216,6 +215,7 @@ func (r *FunctionReconciler) Reconcile(request ctrl.Request) (ctrl.Result, error
 		return r.onGitJobChange(ctx, log, instance, rtmCfg, jobs.Items, gitOptions, dockerConfig)
 
 	case instance.Spec.Type != serverlessv1alpha1.SourceTypeGit &&
+		instance.Spec.CustomRuntimeImage == "" && // Don't Build custom images
 		r.isOnJobChange(instance, rtmCfg, jobs.Items, deployments.Items, git.Options{}, dockerConfig):
 		return r.onJobChange(ctx, log, instance, rtmCfg, configMaps.Items[0].GetName(), jobs.Items, dockerConfig)
 

@@ -52,6 +52,10 @@ func GetRuntimeConfig(r serverlessv1alpha1.Runtime) Config {
 				{Name: "FUNC_RUNTIME", Value: "python39"},
 				{Name: "PYTHONUNBUFFERED", Value: "TRUE"}},
 		}
+	case serverlessv1alpha1.Custom:
+		return Config{
+			Runtime: serverlessv1alpha1.Custom,
+		}
 	default:
 		return Config{
 			Runtime:                 serverlessv1alpha1.Nodejs12,

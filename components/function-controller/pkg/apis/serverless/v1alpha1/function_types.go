@@ -20,6 +20,7 @@ const (
 	Nodejs12 Runtime = "nodejs12"
 	Nodejs14 Runtime = "nodejs14"
 	Python39 Runtime = "python39"
+	Custom   Runtime = "custom"
 )
 
 // RuntimeExtended enumerates runtimes that are either currently supported or
@@ -33,6 +34,7 @@ const (
 	RuntimeExtendedNodejs14 RuntimeExtended = "nodejs14"
 	RuntimeExtendedPython38 RuntimeExtended = "python38"
 	RuntimeExtendedPython39 RuntimeExtended = "python39"
+	RuntimeExtendedCustom   RuntimeExtended = "custom"
 )
 
 const (
@@ -74,6 +76,9 @@ type FunctionSpec struct {
 	Type SourceType `json:"type,omitempty"`
 
 	Repository `json:",inline,omitempty"`
+
+	// +optional
+	CustomRuntimeImage string `json:"customRuntimeImage,omitempty"`
 }
 
 const (

@@ -12,6 +12,8 @@ func ValidateDependencies(runtime Runtime, dependencies string) error {
 		return validateNodeJSDependencies(dependencies)
 	case Python39:
 		return nil
+	case Custom:
+		return nil
 	}
 
 	return fmt.Errorf("cannot find runtime: %s", runtime)

@@ -75,7 +75,7 @@ func main() {
 	}
 
 	atomicLevel := zap.NewAtomicLevelAt(logLevel)
-	zapLogger := ctrlzap.NewRaw(ctrlzap.UseDevMode(true), ctrlzap.Level(&atomicLevel))
+	zapLogger := ctrlzap.NewRaw(ctrlzap.Level(&atomicLevel))
 	ctrl.SetLogger(zapr.NewLogger(zapLogger))
 
 	setupLog.Info("Generating Kubernetes client config")

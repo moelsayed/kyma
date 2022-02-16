@@ -356,6 +356,9 @@ func (r *FunctionReconciler) getGitBuildJobVolumeMounts(instance *serverlessv1al
 
 func (r *FunctionReconciler) buildDeployment(instance *serverlessv1alpha1.Function, rtmConfig runtime.Config, dockerConfig DockerConfig) appsv1.Deployment {
 	imageName := r.buildImageAddress(instance, dockerConfig.PullAddress)
+	if instance.Spec.CustomRuntimeImage != "" {
+		imageName = instance.Spec.CustomRuntimeImage
+	}
 	deploymentLabels := r.functionLabels(instance)
 	podLabels := r.podLabels(instance)
 
