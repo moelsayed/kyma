@@ -56,6 +56,8 @@ spec:
             properties:
               baseDir:
                 type: string
+              baseDockerFile:
+                type: string
               buildResources:
                 description: ResourceRequirements describes the compute resource requirements.
                 properties:
@@ -238,14 +240,13 @@ spec:
                 - nodejs12
                 - nodejs14
                 - python39
+                - custom
                 type: string
               source:
                 description: Source defines the source code of a function
                 type: string
               type:
                 type: string
-            required:
-            - source
             type: object
           status:
             description: FunctionStatus defines the observed state of Function
@@ -285,6 +286,7 @@ spec:
                 - nodejs10
                 - python38
                 - python39
+                - custom
                 type: string
               source:
                 type: string

@@ -133,15 +133,17 @@ func (r *FunctionReconciler) Reconcile(request ctrl.Request) (ctrl.Result, error
 		kubernetes.ConfigLabel:  kubernetes.RuntimeLabelValue,
 		kubernetes.RuntimeLabel: string(instance.Spec.Runtime),
 	}
-	if err := r.client.ListByLabel(ctx, instance.GetNamespace(), labels, &runtimeConfigMap); err != nil {
-		log.Error(err, "Cannot list runtime configmap")
-		return ctrl.Result{}, err
-	}
+	if instance.Spec.Runtime != serverlessv1alpha1.Custom {
 
-	if len(runtimeConfigMap.Items) != 1 {
-		return ctrl.Result{}, fmt.Errorf("Expected one config map, found %d, with labels: %+v", len(runtimeConfigMap.Items), labels)
-	}
+		if err := r.client.ListByLabel(ctx, instance.GetNamespace(), labels, &runtimeConfigMap); err != nil {
+			log.Error(err, "Cannot list runtime configmap")
+			return ctrl.Result{}, err
+		}
 
+		if len(runtimeConfigMap.Items) != 1 {
+			return ctrl.Result{}, fmt.Errorf("Expected one config map, found %d, with labels: %+v", len(runtimeConfigMap.Items), labels)
+		}
+	}
 	var deployments appsv1.DeploymentList
 	if err := r.client.ListByLabel(ctx, instance.GetNamespace(), r.internalFunctionLabels(instance), &deployments); err != nil {
 		log.Error(err, "Cannot list Deployments")

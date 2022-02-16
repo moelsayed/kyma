@@ -76,6 +76,8 @@ func GetRuntime(r serverlessv1alpha1.Runtime) Runtime {
 		return nodejs{}
 	case serverlessv1alpha1.Python39:
 		return python{}
+	case serverlessv1alpha1.Custom:
+		return custom{}
 	default:
 		return nodejs{}
 	}

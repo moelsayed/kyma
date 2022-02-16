@@ -8,6 +8,7 @@ import (
 	"github.com/kyma-project/kyma/components/function-controller/internal/controllers/serverless/runtime"
 	"github.com/kyma-project/kyma/components/function-controller/internal/git"
 	serverlessv1alpha1 "github.com/kyma-project/kyma/components/function-controller/pkg/apis/serverless/v1alpha1"
+	"github.com/sirupsen/logrus"
 	appsv1 "k8s.io/api/apps/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -40,7 +41,7 @@ func (r *FunctionReconciler) buildConfigMap(instance *serverlessv1alpha1.Functio
 		FunctionSourceKey: instance.Spec.Source,
 		FunctionDepsKey:   rtm.SanitizeDependencies(instance.Spec.Deps),
 	}
-
+	logrus.Infof("----------------------------------------------BuildConfigMap %v", data)
 	return corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Labels:       r.functionLabels(instance),

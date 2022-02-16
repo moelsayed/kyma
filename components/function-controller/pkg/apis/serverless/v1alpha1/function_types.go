@@ -13,7 +13,7 @@ const (
 
 // Runtime enumerates runtimes that are currently supported by Function Controller
 // It is a subset of RuntimeExtended
-// +kubebuilder:validation:Enum=nodejs12;nodejs14;python39
+// +kubebuilder:validation:Enum=nodejs12;nodejs14;python39;custom
 type Runtime string
 
 const (
@@ -25,7 +25,7 @@ const (
 
 // RuntimeExtended enumerates runtimes that are either currently supported or
 // no longer supported but there still might be "read-only" Functions using them
-// +kubebuilder:validation:Enum=nodejs12;nodejs14;nodejs10;python38;python39
+// +kubebuilder:validation:Enum=nodejs12;nodejs14;nodejs10;python38;python39;custom
 type RuntimeExtended string
 
 const (
@@ -46,7 +46,7 @@ const (
 // FunctionSpec defines the desired state of Function
 type FunctionSpec struct {
 	// Source defines the source code of a function
-	Source string `json:"source"`
+	Source string `json:"source,omitempty"`
 
 	// Deps defines the dependencies for a function
 	Deps string `json:"deps,omitempty"`
@@ -79,6 +79,9 @@ type FunctionSpec struct {
 
 	// +optional
 	CustomRuntimeImage string `json:"customRuntimeImage,omitempty"`
+
+	// +optional
+	BaseDockerFile string `json:"baseDockerFile,omitempty"`
 }
 
 const (
