@@ -15,8 +15,6 @@ import (
 	"github.com/kyma-project/kyma/tests/function-controller/pkg/step"
 	"github.com/kyma-project/kyma/tests/function-controller/testsuite"
 	"github.com/kyma-project/kyma/tests/function-controller/testsuite/scenarios"
-
-	controllerruntime "sigs.k8s.io/controller-runtime"
 )
 
 type scenario struct {
@@ -57,7 +55,8 @@ func main() {
 		logf.Errorf("Scenario %s not exist", scenarioName)
 		os.Exit(1)
 	}
-	restConfig := controllerruntime.GetConfigOrDie()
+	//FIXME add out of a cluster rest config
+	var restConfig rest.Config
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -67,7 +66,7 @@ func main() {
 		scenarioDisplayName := fmt.Sprintf("%s-%s", scenarioName, scenario.displayName)
 		func(testSuite testSuite, name string) {
 			g.Go(func() error {
-				return runScenario(testSuite, name, logf, cfg, restConfig)
+				return runScenario(testSuite, name, logf, cfg, &restConfig)
 			})
 		}(scenario.testSuite, scenarioDisplayName)
 	}
