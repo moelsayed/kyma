@@ -1,4 +1,4 @@
-apiVersion: addons.kyma-project.io/v1alpha1
+apiVersion: addons.kyma-project.io/v1alpha2
 kind: AddonsConfiguration
 metadata:
   name: xf-mocks
@@ -22,7 +22,7 @@ kind: TokenRequest
 metadata:
   name: commerce-mock
 ---
-apiVersion: serverless.kyma-project.io/v1alpha1
+apiVersion: serverless.kyma-project.io/v1alpha2
 kind: Function
 metadata:
   name: orders-function
