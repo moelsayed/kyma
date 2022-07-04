@@ -6,11 +6,14 @@ import (
 	"math/rand"
 	"os"
 	"time"
+	"path/filepath"
 
 	"github.com/sirupsen/logrus"
 	"github.com/vrischmann/envconfig"
 	"golang.org/x/sync/errgroup"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/util/homedir"
 
 	"github.com/kyma-project/kyma/tests/function-controller/pkg/step"
 	"github.com/kyma-project/kyma/tests/function-controller/testsuite"
@@ -55,8 +58,28 @@ func main() {
 		logf.Errorf("Scenario %s not exist", scenarioName)
 		os.Exit(1)
 	}
-	//FIXME add out of a cluster rest config
-	var restConfig rest.Config
+
+	home := homedir.HomeDir()
+	kubeconfigPath := filepath.Join(home, ".kube", "config")
+	logf.Infof("kubeconfig path: %s",kubeconfigPath)
+
+	bytesArray, err := os.ReadFile(kubeconfigPath)
+	if err != nil {
+		logf.Errorf("Unable to load kubeconfig: %s",err.Error())
+		os.Exit(1)
+	}
+
+	clientConfig ,err:= clientcmd.NewClientConfigFromBytes(bytesArray)
+	if err != nil {
+		logf.Errorf("Unable to get client config: %s",err.Error())
+		os.Exit(1)
+	}
+
+	restConfig, err := clientConfig.ClientConfig()
+	if err!=nil {
+		logf.Errorf("Unable to get rest config: %s",err.Error())
+		os.Exit(1)
+	}
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -66,7 +89,7 @@ func main() {
 		scenarioDisplayName := fmt.Sprintf("%s-%s", scenarioName, scenario.displayName)
 		func(testSuite testSuite, name string) {
 			g.Go(func() error {
-				return runScenario(testSuite, name, logf, cfg, &restConfig)
+				return runScenario(testSuite, name, logf, cfg, restConfig)
 			})
 		}(scenario.testSuite, scenarioDisplayName)
 	}
