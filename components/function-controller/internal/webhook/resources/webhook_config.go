@@ -260,7 +260,7 @@ func createValidatingWebhookConfiguration(config WebhookConfig) *admissionregist
 
 func getFunctionConvertingWebhookCfg(config WebhookConfig) admissionregistrationv1.MutatingWebhook {
 	failurePolicy := admissionregistrationv1.Fail
-	matchPolicy := admissionregistrationv1.Exact
+	matchPolicy := admissionregistrationv1.Equivalent
 	reinvocationPolicy := admissionregistrationv1.NeverReinvocationPolicy
 	scope := admissionregistrationv1.AllScopes
 	sideEffects := admissionregistrationv1.SideEffectClassNone
